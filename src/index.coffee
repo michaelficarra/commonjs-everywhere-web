@@ -63,7 +63,13 @@ app.get /^\/bundle\/([^@]+)(?:@(.+))?$/, (req, res) ->
 
           root = path.normalize path.join tempBuildDir, 'node_modules', pkg
           entryFile = path.join root, (registryEntry.main or 'index.js')
-          if fs.statSync(entryFile).isDirectory()
+          entryFileStats =
+            try
+              fs.statSync entryFile
+            catch e
+              entryFile = "#{entryFile}.js"
+              fs.statSync entryFile
+          if entryFileStats.isDirectory()
             entryFile = path.join entryFile, 'index.js'
           outputFile = path.normalize path.join tempBuildDir, 'bundle.js'
 
