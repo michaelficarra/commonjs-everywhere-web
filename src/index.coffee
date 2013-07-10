@@ -63,6 +63,8 @@ app.get /^\/bundle\/([^@]+)(?:@(.+))?$/, (req, res) ->
 
           root = path.normalize path.join tempBuildDir, 'node_modules', pkg
           entryFile = path.join root, (registryEntry.main or 'index.js')
+          if fs.statSync(entryFile).isDirectory()
+            entryFile = path.join entryFile, 'index.js'
           outputFile = path.normalize path.join tempBuildDir, 'bundle.js'
 
           pkgSlug = pkg.replace(/^[^$_a-z]/i, '_').replace(/[^a-z0-9$_]/ig, '_')
@@ -79,6 +81,7 @@ app.get /^\/bundle\/([^@]+)(?:@(.+))?$/, (req, res) ->
           res.send 200, js
 
         catch err
+          console.dir err
           res.send 500, err.toString()
           res.end()
         finally
