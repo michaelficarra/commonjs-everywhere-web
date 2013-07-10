@@ -30,10 +30,11 @@ fs.mkdirSync buildPath unless fs.existsSync buildPath
 app = express()
 
 app.get /^\/bundle\/([^@]+)(?:@(.+))?$/, (req, res) ->
+  console.log "#{req.ip}: GET #{req.originalUrl}"
+
   pkg = req.params[0]
   version = req.params[1] or 'latest'
 
-  console.dir req.params
   npm.load {}, ->
     npm.commands.info ["#{pkg}@#{version}"], (err, infoResult) ->
       if err
