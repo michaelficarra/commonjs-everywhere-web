@@ -1,6 +1,5 @@
 default: build
 
-BINDIR = bin
 SRCDIR = src
 LIBDIR = lib
 
