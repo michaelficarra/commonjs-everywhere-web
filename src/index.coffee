@@ -36,7 +36,10 @@ app.get /^\/bundle\/([^@]+)(?:@(.+))?$/, (req, res) ->
   console.dir req.params
   npm.load {}, ->
     npm.commands.info ["#{pkg}@#{version}"], (err, infoResult) ->
-      throw err if err
+      if err
+        res.send 404, err.toString()
+        res.end()
+        return
       registryEntry = entry for own v, entry of infoResult
 
       if version is 'latest'
