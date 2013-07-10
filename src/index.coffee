@@ -78,5 +78,6 @@ app.get /^\/bundle\/([^@]+)(?:@(.+))?$/, (req, res) ->
         res.attachment cacheFileName
         res.send 200, js
 
-app.listen 3000
-console.log 'Listening on port 3000'
+port = process.env.PORT or 3000
+app.listen port
+console.log "Listening on port #{port}"
