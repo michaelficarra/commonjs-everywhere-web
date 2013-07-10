@@ -7,7 +7,7 @@ TODO
 
 ## CDN Demo
 
-GET http://pure-forest-2394.herokuapp.com/bundle/<package>[@<version>]
+GET http://pure-forest-2394.herokuapp.com/bundle/&lt;package>[@&lt;version>]
 
 ### Examples
 
