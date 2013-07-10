@@ -55,31 +55,34 @@ app.get /^\/bundle\/([^@]+)(?:@(.+))?$/, (req, res) ->
 
       tempBuildDir = mktemp.createDirSync path.join buildPath, "#{pkg}@#{version}-XXXXXX"
       fs.writeFileSync (path.join tempBuildDir, 'package.json'), '{"name": "name"}'
-      npm.prefix = tempBuildDir
 
+      npm.prefix = tempBuildDir
       npm.commands.install [registryEntry.dist.tarball], (err, installOutput) ->
-        if err
+        try
+          throw err if err
+
+          root = path.normalize path.join tempBuildDir, 'node_modules', pkg
+          entryFile = path.join root, (registryEntry.main or 'index.js')
+          outputFile = path.normalize path.join tempBuildDir, 'bundle.js'
+
+          pkgSlug = pkg.replace(/^[^$_a-z]/i, '_').replace(/[^a-z0-9$_]/ig, '_')
+          bundle = cjse.cjsify entryFile, root, export: pkgSlug, ignoreMissing: yes
+          bundle = esmangle.mangle (esmangle.optimize bundle), destructive: yes
+          js = escodegen.generate bundle, format: escodegenFormat
+
+          fs.writeFileSync outputFile, js
+          fs.renameSync outputFile, cacheFile
           rimraf.sync tempBuildDir
+
+          res.type 'javascript'
+          res.attachment cacheFileName
+          res.send 200, js
+
+        catch err
           res.send 500, err.toString()
           res.end()
-          return
-
-        root = path.normalize path.join tempBuildDir, 'node_modules', pkg
-        entryFile = path.join root, (registryEntry.main or 'index.js')
-        outputFile = path.normalize path.join tempBuildDir, 'bundle.js'
-
-        pkgSlug = pkg.replace(/^[^$_a-z]/i, '_').replace(/[^a-z0-9$_]/ig, '_')
-        bundle = cjse.cjsify entryFile, root, export: pkgSlug, ignoreMissing: yes
-        bundle = esmangle.mangle (esmangle.optimize bundle), destructive: yes
-        js = escodegen.generate bundle, format: escodegenFormat
-
-        fs.writeFileSync outputFile, js
-        fs.renameSync outputFile, cacheFile
-        rimraf.sync tempBuildDir
-
-        res.type 'javascript'
-        res.attachment cacheFileName
-        res.send 200, js
+        finally
+          rimraf.sync tempBuildDir
 
 port = process.env.PORT or 3000
 app.listen port
