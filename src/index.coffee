@@ -22,6 +22,11 @@ escodegenFormat =
   parentheses: no
   semicolons: no
 
+cachePath = path.resolve 'cache'
+buildPath = path.resolve 'build'
+fs.mkdirSync cachePath unless fs.existsSync cachePath
+fs.mkdirSync buildPath unless fs.existsSync buildPath
+
 app = express()
 
 app.get /^\/bundle\/([^@]+)(?:@(.+))?$/, (req, res) ->
@@ -38,14 +43,14 @@ app.get /^\/bundle\/([^@]+)(?:@(.+))?$/, (req, res) ->
         version = registryEntry.version
 
       cacheFileName = "#{pkg}@#{version}-#{registryEntry.dist.shasum}.js"
-      cacheFile = path.resolve path.join 'cache', cacheFileName
+      cacheFile = path.join cachePath, cacheFileName
       if fs.existsSync cacheFile
         res.type 'javascript'
         res.attachment cacheFileName
         res.send 200, fs.readFileSync cacheFile
         return
 
-      tempBuildDir = mktemp.createDirSync path.resolve path.join 'build', "#{pkg}@#{version}-XXXXXX"
+      tempBuildDir = mktemp.createDirSync path.join buildPath, "#{pkg}@#{version}-XXXXXX"
       fs.writeFileSync (path.join tempBuildDir, 'package.json'), '{"name": "name"}'
       npm.prefix = tempBuildDir
 
