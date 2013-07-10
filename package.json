@@ -1,0 +1,42 @@
+{
+  "name": "commonjs-everywhere-web",
+  "version": "0.0.0",
+  "description": "web demo for commonjs-everywhere",
+  "homepage": "https://github.com/michaelficarra/commonjs-everywhere-web",
+  "keywords": [],
+  "author": {
+    "name": "Michael Ficarra",
+    "email": "git@michael.ficarra.me"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/michaelficarra/commonjs-everywhere-web"
+  },
+  "bugs": "https://github.com/michaelficarra/commonjs-everywhere-web/issues",
+  "engines": {
+    "node": "0.8.x || 0.9.x || 0.10.x"
+  },
+  "main": "lib/index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "dependencies": {
+    "commonjs-everywhere": "0.8.x",
+    "npm": "~1.3.2",
+    "escodegen": "~0.0.23",
+    "esmangle": "~0.0.14",
+    "express": "3.3.x",
+    "mktemp": "~0.3.1",
+    "rimraf": "2.2.x"
+  },
+  "devDependencies": {
+    "coffee-script-redux": "2.0.0-beta5",
+    "semver": "~1.1.4"
+  },
+  "licenses": [
+    {
+      "type": "BSD",
+      "url": "https://github.com/michaelficarra/commonjs-everywhere-web/blob/master/LICENSE"
+    }
+  ]
+}
