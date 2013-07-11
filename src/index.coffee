@@ -29,6 +29,9 @@ fs.mkdirSync buildPath unless fs.existsSync buildPath
 
 app = express()
 
+app.get '/', (req, res) ->
+  res.sendfile 'index.html'
+
 app.get /^\/bundle\/([^@]+)(?:@(.+))?$/, (req, res) ->
   console.log "#{req.ip}: GET #{req.originalUrl}"
 
