@@ -34,6 +34,7 @@ app.get '/', (req, res) ->
 
 app.get /^\/bundle\/([^@]+)(?:@(.+))?$/, (req, res) ->
   console.log "#{req.ip}: GET #{req.originalUrl}"
+  req.socket.setTimeout 120000
 
   pkg = req.params[0]
   version = req.params[1] or 'latest'
