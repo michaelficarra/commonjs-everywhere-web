@@ -10,18 +10,6 @@ mktemp = require 'mktemp'
 npm = require 'npm'
 rimraf = require 'rimraf'
 
-escodegenFormat =
-  indent:
-    style: ''
-    base: 0
-  renumber: yes
-  hexadecimal: yes
-  quotes: 'auto'
-  escapeless: yes
-  compact: yes
-  parentheses: no
-  semicolons: no
-
 cachePath = path.resolve 'cache'
 buildPath = path.resolve 'build'
 fs.mkdirSync cachePath unless fs.existsSync cachePath
@@ -83,7 +71,7 @@ app.get /^\/bundle\/([^@]+)(?:@(.+))?$/, (req, res) ->
           pkgSlug = pkg.replace(/^[^$_a-z]/i, '_').replace(/[^a-z0-9$_]/ig, '_')
           bundle = cjse.cjsify entryFile, root, export: pkgSlug, ignoreMissing: yes
           bundle = esmangle.mangle (esmangle.optimize bundle), destructive: yes
-          js = escodegen.generate bundle, format: escodegenFormat
+          js = escodegen.generate bundle, format: escodegen.FORMAT_MINIFY
 
           fs.writeFileSync outputFile, js
           fs.renameSync outputFile, cacheFile
