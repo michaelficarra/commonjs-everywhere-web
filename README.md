@@ -9,10 +9,10 @@ Demos for [michaelficarra/commonjs-everywhere](https://github.com/michaelficarra
 
 ## Bundling Service Demo
 
-    GET http://pure-forest-2394.herokuapp.com/bundle/<package>[@<version>]
+    GET http://cjse.herokuapp.com/bundle/<package>[@<version>]
 
 ### Examples
 
-* http://pure-forest-2394.herokuapp.com/bundle/prelude-ls
-* http://pure-forest-2394.herokuapp.com/bundle/esmangle@latest
-* http://pure-forest-2394.herokuapp.com/bundle/escodegen@0.0.23
+* http://cjse.herokuapp.com/bundle/prelude-ls
+* http://cjse.herokuapp.com/bundle/esmangle@latest
+* http://cjse.herokuapp.com/bundle/escodegen@0.0.23
