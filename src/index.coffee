@@ -38,13 +38,13 @@ app.get /^\/bundle\/([^@]+)(?:@(.+))?$/, (req, res) ->
   pkg = req.params[0]
   version = req.params[1] or 'latest'
 
-  npm.load {}, ->
-    npm.commands.info ["#{pkg}@#{version}"], (err, infoResult) ->
+  npm.load {loglevel: 'warn'}, ->
+    npm.commands.view ["#{pkg}@#{version}"], true, (err, viewResult) ->
       if err
         res.send 404, err.toString()
         res.end()
         return
-      registryEntry = entry for own v, entry of infoResult
+      registryEntry = entry for own v, entry of viewResult
 
       if version is 'latest'
         version = registryEntry.version
@@ -52,6 +52,7 @@ app.get /^\/bundle\/([^@]+)(?:@(.+))?$/, (req, res) ->
       cacheFileName = "#{pkg}@#{version}-#{registryEntry.dist.shasum}.js"
       cacheFile = path.join cachePath, cacheFileName
       if fs.existsSync cacheFile
+        console.log "Serving cached bundle /#{path.relative '.', cacheFileName}"
         res.type 'javascript'
         res.attachment cacheFileName
         res.send 200, fs.readFileSync cacheFile
@@ -60,6 +61,7 @@ app.get /^\/bundle\/([^@]+)(?:@(.+))?$/, (req, res) ->
       tempBuildDir = mktemp.createDirSync path.join buildPath, "#{pkg}@#{version}-XXXXXX"
       fs.writeFileSync (path.join tempBuildDir, 'package.json'), '{"name": "name"}'
 
+      console.log "Building bundle for #{pkg}@#{version} in /#{path.relative '.', tempBuildDir}"
       npm.prefix = tempBuildDir
       npm.commands.install [registryEntry.dist.tarball], (err, installOutput) ->
         try
@@ -85,6 +87,7 @@ app.get /^\/bundle\/([^@]+)(?:@(.+))?$/, (req, res) ->
           fs.writeFileSync outputFile, js
           fs.renameSync outputFile, cacheFile
           rimraf.sync tempBuildDir
+          console.log "Created new bundle /#{path.relative '.', cacheFile}"
 
           res.type 'javascript'
           res.attachment cacheFileName
